@@ -78,6 +78,9 @@ class Engineer extends Entity {
 	}
 
 	protected function _getAge($value) {
+		if( empty( $this->birthday )){
+			return NULL;
+		}
 		return $this->birthday->diff(Date::now())->format('%y');
 	}
 

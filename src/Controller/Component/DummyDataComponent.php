@@ -48,6 +48,7 @@ class DummyDataComponent extends Component {
 			'email' => sprintf('enterprise%04d@dummy.com', $i),
 			'password' => '0123',
 			'group_id' => ( $i < 5 ) ? Defines::GROUP_ENTERPRISE_FREE : Defines::GROUP_ENTERPRISE_PREMIUM,
+			'expunge' => Defines::USER_EXPUNGE_FALSE,
 			'enterprise' => [
 				'employee' => rand(1, 9999),
 				'capital' => rand(1, 9999),
@@ -83,6 +84,7 @@ class DummyDataComponent extends Component {
 			'email' => sprintf('engineer%04d@dummy.com', $num),
 			'password' => '0123',
 			'group_id' => Defines::GROUP_ENGINEER,
+			'expunge' => Defines::USER_EXPUNGE_FALSE,
 			'engineer' => [
 				'postalcode' => sprintf('%03d-%04d', rand(0, 999), rand(0, 9999)),
 				'phone' => sprintf('090-%04d-%04d', rand(0, 9999), rand(0, 9999)),

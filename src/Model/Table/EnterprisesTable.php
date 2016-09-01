@@ -7,6 +7,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Search\Manager;
+use App\Defines\Defines;
 
 /**
  * Enterprises Model
@@ -45,7 +46,8 @@ class EnterprisesTable extends Table {
 
 		$this->belongsTo('Users', [
 			'foreignKey' => 'user_id',
-			'joinType' => 'INNER'
+			'joinType' => 'INNER',
+			'conditions' => ['Users.expunge is Not' => Defines::USER_EXPUNGE_TRUE],
 		]);
 	}
 

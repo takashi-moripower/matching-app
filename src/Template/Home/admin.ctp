@@ -10,8 +10,8 @@ use App\Defines\Defines;
 	<li role="presentation"><?= $this->Html->link('求人',['controller'=>'offers','action'=>'index'])?></li>
 	<li role="presentation"><?= $this->Html->link('権限',['plugin'=>'TakashiMoripower/AclManager','controller'=>'groups','action'=>'index'])?></li>
 	<li role="separator" class="divider"><hr></li>
-	<li role="presentation"><?= $this->Html->link('技術者追加',['controller'=>'users','action'=>'add',Defines::GROUP_ENGINEER])?></li>
-	<li role="presentation"><?= $this->Html->link('企業追加',['controller'=>'users','action'=>'add',Defines::GROUP_ENTERPRISE_FREE])?></li>
+	<li role="presentation"><?= $this->Html->link('技術者追加',['controller'=>'users','action'=>'addEngineer'])?></li>
+	<li role="presentation"><?= $this->Html->link('企業追加',['controller'=>'users','action'=>'addEnterprise'])?></li>
 	<li role="separator" class="divider"><hr></li>
 	<li role="presentation"><?= $this->Html->link('debug アカウント切り替え',['controller'=>'debug','action'=>'loginAs'])?></li>
 	<li role="presentation"><?= $this->Html->link('debug ダミーデータ生成　企業',['controller'=>'debug','action'=>'dummyEnterprises'])?></li>

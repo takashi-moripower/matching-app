@@ -76,7 +76,10 @@ class Defines{
 	const COMMENT_FLAG_READ_ENGINEER = 0x20;
 	const COMMENT_FLAG_READ_MASK = 0xf0;
 	
-	
+	const USER_EXPUNGE_CHECKING = 2;
+	const USER_EXPUNGE_DEAD = 1;
+	const USER_EXPUNGE_ALIVE = 0;
+
 	const USER_EXPUNGE_TRUE = 1;
 	const USER_EXPUNGE_FALSE = 0;
 }

@@ -295,20 +295,98 @@ class UsersController extends AppController {
 		$user = $this->Users->newEntity([
 			'group_id' => Defines::GROUP_ENGINEER,
 			'engineer' => [],
-			'expunge' => 1,
+			'expunge' => Defines::USER_EXPUNGE_CHECKING,
 				]
 				, ['associated' => ['Engineers']]
+		);
+
+		//	post情報がなければEdit画面を表示
+		if (!$this->request->is(['patch', 'post', 'put'])) {
+			$this->set(compact('user'));
+			return $this->render('edit');
+		}
+
+
+		//	patchEntity経由でvalidatorを呼ぶ
+		$user = $this->Users->patchEntity($user, $this->request->data);
+
+		//	入力が無効なら警告を出してEdit画面を表示
+		if ($user->invalid()) {
+			if (Hash::get($user->errors(), 'email', NULL)) {
+				$this->Flash->error('メールアドレスが無効です');
+			}
+			if (Hash::get($user->errors(), 'email.unique', NULL)) {
+				$this->Flash->error('このメールアドレスは登録済みです');
+			}
+
+			$this->set(compact('user'));
+			return $this->render('edit');
+		}
+
+
+		//	メールアドレスの生存チェックが必要な場合
+		if ($user->expunge == Defines::USER_EXPUNGE_CHECKING) {
+			$this->Users->setChecker( $this->request->data );
+			return $this->redirect(['action' => 'check']);
+		}
+
+		//	ユーザー登録に成功したらそのアカウントでログイン
+		if ($this->Users->save($user)) {
+			return $this->_setLoginUser($user->id);
+		} else {
+			$this->Flash->error('ユーザー情報の保存に失敗');
+		}
+
+		$this->set(compact('user'));
+		$this->render('edit');
+	}
+
+	public function check($code = NULL) {
+		if (empty($code)) {
+			return;
+		}
+		
+		$table_o = TableRegistry::get('Options');
+		
+		$title = "mailAliveCheck.{$code}";
+		
+		$opt = $table_o->find()
+				->where(['title' => $title ])
+				->first();
+
+		if (empty($opt)) {
+			$this->Flash->error('無効なコード');
+			return $this->redirect(['controller' => 'users', 'action' => 'login']);
+		}
+		
+		$table_o->delete( $opt );
+		
+		$user = $this->Users->newEntity( 
+				unserialize( $opt->content ) + ['engineer'=>[]],
+				['associated'=>['engineers']]
+				);
+
+		$user->expunge = Defines::USER_EXPUNGE_ALIVE;
+		
+		if(	$this->Users->save($user) ){
+			$this->Flash->success('技術者情報は正常に登録されました');
+			return $this->_setLoginUser($user->id);
+		}
+	}
+
+	public function addEnterprise() {
+		$user = $this->Users->newEntity([
+			'group_id' => Defines::GROUP_ENTERPRISE_FREE,
+			'enterprises' => [],
+			'expunge' => Defines::USER_EXPUNGE_FALSE,
+				]
+				, ['associated' => ['enterprises']]
 		);
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$user = $this->Users->patchEntity($user, $this->request->data);
 			if ($this->Users->save($user)) {
-				if ($user->expunge) {
-					$this->Users->setChecker($user);
-					return $this->redirect(['action' => 'check']);
-				} else {
-					return $this->_setLoginUser($user->id);
-				}
+				$this->Flash->success('ユーザー情報は正常に保存されました');
 			} else {
 				$this->Flash->error('ユーザー情報の保存に失敗');
 
@@ -324,36 +402,6 @@ class UsersController extends AppController {
 		$this->set(compact('user'));
 
 		$this->render('edit');
-	}
-
-	public function check($code = NULL) {
-		if (empty($code)) {
-			return;
-		}
-
-		$opt = TableRegistry::get('Options')->find()
-				->where(['content' => $code])
-				->first();
-
-		$matches = [];
-		if (empty($opt) || !preg_match('/mailAliveCheck.([0-9]+)/', $opt->title, $matches)) {
-			$this->Flash->error('無効なコード');
-			return $this->redirect(['controller' => 'users', 'action' => 'login']);
-		}
-
-		$user_id = $matches[1];
-		$user = $this->Users->get($user_id);
-
-		if (empty($user)) {
-			$this->Flash->error('無効なコード');
-			return $this->redirect(['controller' => 'users', 'action' => 'login']);
-		}
-
-		$user->expunge = 0;
-		$this->Users->save($user);
-
-		$this->Flash->success('技術者情報は正常に登録されました');
-		return $this->_setLoginUser($user_id);
 	}
 
 }

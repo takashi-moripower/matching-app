@@ -70,7 +70,7 @@ class UsersTable extends Table {
 				->email('email')
 				->requirePresence('email', 'create')
 				->notEmpty('email')
-				->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+				->add('email', 'unique', [ 'rule' => 'validateUnique', 'provider' => 'table',]);
 
 		$validator
 				->requirePresence('password', 'create')
@@ -188,31 +188,35 @@ class UsersTable extends Table {
 		return $user->toArray();
 	}
 
-	public function setChecker($entity) {
+	public function setChecker( $data ) {
 		$table_o = TableRegistry::get('Options');
 
-		$user_id = $entity->id;
-
-		do {
+		while(1){
 			$code = \App\Utils\AppUtility::makeRandStr(30);
-		} while ($table_o->exists(['content' => $code]));
+			$title = "mailAliveCheck.{$code}";
+			if( !$table_o->exists(['title'=>$title]) ){
+				break;
+			}
+		}
+		
+		$content = serialize( $data );
 
 		$opt = $table_o->newEntity([
-			'title' => "mailAliveCheck.{$user_id}",
-			'content' => $code,
+			'title' => $title,
+			'content' => $content,
 			'autoload' => 0,
 				]
 		);
 
 		$table_o->save($opt);
-
+		
 		$email = new \Cake\Network\Email\Email();
 		$email
 				->transport('default')
 				->viewVars([ 'code' => $code])
 				->from([Defines::SYSTEM_EMAIL => Defines::SYSTEM_NAME])
 				->subject(Defines::SYSTEM_NAME . '登録手続き')
-				->to($entity->email)
+				->to($data['email'])
 				->template('check')
 				->send();
 	}
