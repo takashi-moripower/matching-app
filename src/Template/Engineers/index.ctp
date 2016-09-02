@@ -36,11 +36,11 @@ $loginUser = $this->getLoginUser();
 							<td class="col-lg-1 trim"><?= $engineer->contact->engineer_record_text ?></td>
 							<td class="col-lg-1 trim"><?= $engineer->contact->enterprise_record_text ?></td>
 						<?php endif ?>
-						<td class="col-lg-1">
-							<?= $this->Html->link('view', ['controller' => 'engineers', 'action' => 'view', $engineer->id]) ?>
+						<td class="col-lg-1 text-center">
+							<?= $this->Html->link( '<i class="fa fa-search"></i>', ['controller' => 'engineers', 'action' => 'view', $engineer->id],['escape'=>false]) ?>
 							<?php
 							if ($this->getLoginUser('group_id') == Defines::GROUP_ADMINISTRATOR) {
-								echo $this->Html->link('edit', ['controller' => 'users', 'action' => 'edit', $engineer->user_id]);
+								echo $this->Html->link('<i class="fa fa-pencil"></i>', ['controller' => 'users', 'action' => 'edit', $engineer->user_id],['escape'=>false]);
 							}
 							?>
 						</td>

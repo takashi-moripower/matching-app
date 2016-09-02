@@ -18,6 +18,7 @@ $items = [
 		'label' => '技術者',
 		'url' => [
 			'controller' => 'engineers',
+			'clear'=>true,
 		]
 	],
 ];

@@ -1,4 +1,16 @@
-<?= $this->Element('Enterprises/viewTabs', ['enterprise_id' => $enterprise_id]) ?>
+<?php
+use App\Defines\Defines;
+switch( $this->getLoginUser('group_id')){
+	case Defines::GROUP_ENGINEER:
+		echo $this->Element('Enterprises/viewTabs', ['enterprise_id' => $enterprise_id]) ;
+		break;
+	
+	case Defines::GROUP_ENTERPRISE_PREMIUM:
+	case Defines::GROUP_ENTERPRISE_FREE:
+		echo $this->Element('Engineers/viewTabs', ['engineer_id' => $engineer_id]) ;
+		break;		
+}
+?>
 
 <div class="panel panel-default panel-under-tab">
 	<table class="table">
