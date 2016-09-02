@@ -1,7 +1,7 @@
 <div class="col-lg-12">
-	
-	<?= $this->Element('Engineers/viewTabs',['engineer_id'=>$engineer->id]) ?>
-	
+
+	<?= $this->Element('Engineers/viewTabs', ['engineer_id' => $engineer->id]) ?>
+
 	<div class="panel panel-default panel-under-tab">
 		<table class="table table-bordered table-view table-view-engineers">
 			<tbody>
@@ -33,17 +33,11 @@
 					<th>技能・資格</th>
 					<td><?= h($engineer->attribute_names) ?></td>
 				</tr>
-				<?php foreach ($engineer->user->informations as $information ): ?>
-					<tr>
-						<th><?= h($information->title) ?></th>
-						<td>
-							<?= h($information->content) ?>
-							<?php foreach ($information->files as $file ): ?>
-								<?= $this->Element('Informations/file',['file'=>$file]) ?>
-							<?php endforeach ?>
-						</td>
-					</tr>
-				<?php endforeach ?>
+				<?php
+				foreach ($engineer->user->informations as $information):
+					echo $this->Element('Informations/row', ['information' => $information]);
+				endforeach
+				?>
 			</tbody>
 		</table>
 	</div>

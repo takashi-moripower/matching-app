@@ -10,7 +10,7 @@ use App\Defines\Defines;
  * Offer Entity
  *
  * @property int $id
- * @property int $enterprises_id
+ * @property int $enterprise_id
  * @property string $title
  * @property string $note
  * @property \Cake\I18n\Time $created

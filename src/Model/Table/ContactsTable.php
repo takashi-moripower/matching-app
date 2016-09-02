@@ -134,9 +134,11 @@ class ContactsTable extends Table {
 
 	public function setEngineerAccess( $engineer_id , $enterprise_id , $flag ){
 		$entity = $this->getByEE( $engineer_id , $enterprise_id );
-
+debug($entity);
 		$entity->engineer_record |= $flag;
 		$entity->engineer_date = \Cake\I18n\Time::now();
+debug($entity);
+
 		if( isset( $entity->engineer_count) ){
 			$entity->engineer_count ++;
 		}else{

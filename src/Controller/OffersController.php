@@ -72,10 +72,19 @@ class OffersController extends AppController {
 	 * @return \Cake\Network\Response|null
 	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
 	 */
-	public function view($id = null) {
+	public function view( $id ) {
 		$offer = $this->Offers->get($id, [
 			'contain' => ['Enterprises' => ['Users'], 'Attributes']
 		]);
+		
+		$loginUser = $this->_getLoginUser();
+		
+		if( Hash::get( $loginUser , 'group_id' ) == Defines::GROUP_ENGINEER ){
+			$table_c = TableRegistry::get('Contacts');
+			$table_c->setEngineerAccess( $loginUser['engineer_id'] , $offer->enterprise_id , Defines::CONTACT_RECORD_CHECK_REQUIMENT );
+			
+			debug(Defines::CONTACT_RECORD_CHECK_REQUIMENT);
+		}
 
 		$this->set('offer', $offer);
 		$this->set('_serialize', ['offer']);

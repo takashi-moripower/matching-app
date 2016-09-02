@@ -50,6 +50,7 @@ class HomeController extends AppController {
 			case Defines::GROUP_ENGINEER:
 				$engineer = TableRegistry::get('Engineers')->find()
 						->where(['user_id' => $user_id])
+						->contain(['Users','Attributes'])
 						->first();
 				$this->set(compact('engineer'));
 				$this->render('engineer');
