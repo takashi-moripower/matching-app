@@ -32,10 +32,14 @@ $items = [
 		]
 	],
 	[
+		'label' => '通知',
+		'url' => ['controller' => 'notices', 'action' => 'index']
+	],
+	[
 		'label' => '権限',
 		'url' => ['plugin' => 'TakashiMoripower/AclManager', 'controller' => 'groups', 'action' => 'index']
 	],
 ];
 
-echo $this->Element('Navi/headerNav',['items'=>$items]);
+echo $this->Element('Navi/headerNav', ['items' => $items]);
 ?>

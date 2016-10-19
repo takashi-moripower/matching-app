@@ -2,9 +2,6 @@
 
 use App\Defines\Defines;
 
-\Cake\I18n\FrozenDate::setToStringFormat('yyyy-MM-dd');
-\Cake\I18n\FrozenTime::setToStringFormat('yyyy-MM-dd');
-
 $loginUser = $this->getLoginUser();
 
 switch ($loginUser['group_id']) {

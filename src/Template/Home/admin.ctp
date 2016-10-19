@@ -9,6 +9,7 @@ use App\Defines\Defines;
 	<li role="presentation"><?= $this->Html->link('技能、資格',['controller'=>'attributes','action'=>'index'])?></li>
 	<li role="presentation"><?= $this->Html->link('求人',['controller'=>'offers','action'=>'index'])?></li>
 	<li role="presentation"><?= $this->Html->link('権限',['plugin'=>'TakashiMoripower/AclManager','controller'=>'groups','action'=>'index'])?></li>
+	<li role="presentation"><?= $this->Html->link('通知',['controller'=>'notices','action'=>'index'])?></li>
 	<li role="separator" class="divider"><hr></li>
 	<li role="presentation"><?= $this->Html->link('技術者追加',['controller'=>'users','action'=>'addEngineer'])?></li>
 	<li role="presentation"><?= $this->Html->link('企業追加',['controller'=>'users','action'=>'addEnterprise'])?></li>

@@ -14,19 +14,6 @@ $items = [
 			'action'=>'edit-self'
 		]
 	],
-	[
-		'label' => '企業',
-		'url' => [
-			'controller' => 'enterprises',
-		]
-	],
-	[
-		'label' => '求人',
-		'url' => [
-			'controller' => 'offers',
-			'action'=>'match',
-		]
-	],
 ];
 
 echo $this->Element('Navi/headerNav',['items'=>$items]);

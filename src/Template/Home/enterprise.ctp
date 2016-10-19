@@ -8,3 +8,5 @@
 	<li role="presentation"><?= $this->Html->link('技術者検索',['controller'=>'engineers','action'=>'index'])?></li>
 </ul>
 
+<?php
+echo $this->Element('notices',['notices'=>$notices]);

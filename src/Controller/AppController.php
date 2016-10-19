@@ -83,6 +83,8 @@ class AppController extends Controller {
 		) {
 			$this->set('_serialize', true);
 		}
+		
+		$this->_setDateFormat();
 	}
 
 	public function isAuthorized($user) {
@@ -93,12 +95,13 @@ class AppController extends Controller {
 		return $acl->check(['Users' => ['id' => $user['id']]], "$controller/$action");
 	}
 	
-	protected function setDateFormat(){
+	protected function _setDateFormat(){
 		//	日付の読み込みフォーマットを　年　月　日にする
 		\Cake\I18n\Date::$wordFormat = 'yyyy-MM-dd';
 		//	日付の出力フォーマットを　年　月　日にする
 		\Cake\I18n\Date::setToStringFormat('yyyy-MM-dd');
-		
+		\Cake\I18n\FrozenDate::setToStringFormat('yyyy-MM-dd');
+		\Cake\I18n\FrozenTime::setToStringFormat('yyyy-MM-dd');		
 	}
 
 	/**

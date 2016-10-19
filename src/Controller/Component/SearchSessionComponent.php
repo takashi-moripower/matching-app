@@ -9,8 +9,9 @@
 namespace App\Controller\Component;
 
 use Cake\Controller\Component;
-use App\Utils\AppUtility;
+//use App\Utils\AppUtility;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 /**
  * 検索条件をセッションに保存、読み込む
@@ -37,7 +38,7 @@ class SearchSessionComponent extends Component {
 
 	public function queryToSession() {
 		$controller = $this->_registry->getController();
-
+		
 		//仕切り直しが必要かどうかの判断
 		if ($this->_isRedirect()){
 			$this->writeSession($this->_new_request);
@@ -54,6 +55,12 @@ class SearchSessionComponent extends Component {
 		if (isset($this->_new_request['limit'])) {
 			$controller->paginate['limit'] = $this->_new_request['limit'];
 		}
+		
+		if (isset($this->_new_request['sort']) && isset($this->_new_request['direction'])) {
+			$controller->paginate['order'] = [
+				$this->_new_request['sort'] => $this->_new_request['direction']
+			];
+		}
 	}
 
 	protected function _isRedirect() {
@@ -66,7 +73,7 @@ class SearchSessionComponent extends Component {
 		$this->_new_request = $request + $session;
 
 
-		//	resetフラグが設定されていた場合
+		//	clearフラグが設定されていた場合
 		//	セッション全情報をクリアしてリダイレクト
 		if (!empty($request['clear'])) {
 			$this->_new_request = [];
@@ -96,8 +103,8 @@ class SearchSessionComponent extends Component {
 	 */
 	protected function _getSessionName() {
 		$controller = $this->_registry->getController();
-		$controller_name = AppUtility::snake($controller->name);
-		$action_name = AppUtility::snake($this->request->action);
+		$controller_name = Inflector::underscore($controller->name);
+		$action_name = Inflector::underscore($this->request->action);
 
 		return "search.{$controller_name}.{$action_name}";
 	}

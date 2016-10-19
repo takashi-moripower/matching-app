@@ -4,7 +4,8 @@ namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
 use App\Defines\Defines;
-
+use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 /**
  * Comment Entity
  *
@@ -45,6 +46,26 @@ class Comment extends Entity {
 			case Defines::COMMENT_FLAG_SEND_ENTERPRISE:
 				return $this->enterprise->user->name;
 		}
+	}
+	
+	protected function _getLast($value){
+		if( $value ){
+			return $value;
+		}
+		if( empty($this->enterprise_id) || empty( $this->engineer_id)){
+			return NULL;
+		}
+		
+		$table = TableRegistry::get('comments');
+		
+		$last = $table->find()
+				->where(['engineer_id'=>$this->engineer_id,'enterprise_id'=>$this->enterprise_id])
+				->order(['modified'=>'desc'])
+				->first();
+		
+		$this->last = $last;
+		
+		return $last;
 	}
 
 }

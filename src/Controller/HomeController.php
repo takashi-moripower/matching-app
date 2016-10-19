@@ -18,18 +18,13 @@ class HomeController extends AppController {
 		parent::beforeFilter($event);
 		$this->Auth->allow(['index']);
 	}
-	
-	public function aaa(){
-		$this->set('data',$this->Auth->User());
-		$this->render('/Common/debug');
-	}
 
 	public function index() {
 		$group_id = $this->Auth->user('group_id');
 		$user_id = $this->Auth->user('id');
 
 		if (empty($group_id)) {
-			
+
 			return $this->redirect(['controller' => 'users', 'action' => 'login']);
 		}
 
@@ -40,28 +35,52 @@ class HomeController extends AppController {
 
 			case Defines::GROUP_ENTERPRISE_FREE:
 			case Defines::GROUP_ENTERPRISE_PREMIUM:
-				$enterprise = TableRegistry::get('Enterprises')->find()
-						->where(['user_id' => $user_id])
-						->first();
-				$this->set(compact('enterprise'));
-				$this->render('enterprise');
-				return;
-				
+				return $this->_enterprise();
+
 			case Defines::GROUP_ENGINEER:
-				$engineer = TableRegistry::get('Engineers')->find()
-						->where(['user_id' => $user_id])
-						->contain(['Users','Attributes'])
-						->first();
-				$this->set(compact('engineer'));
-				$this->render('engineer');
-				return;
+				return $this->_engineer();
 		}
 	}
 
-	public function debug(){
-		$this->request->session()->delete('cakeopauth');
+	protected function _enterprise() {
+		$group_id = $this->Auth->user('group_id');
+		$user_id = $this->Auth->user('id');
+		$notices = TableRegistry::get('Notices')->find('active',['group_id'=>$group_id]);
+		$enterprise = TableRegistry::get('Enterprises')->find()
+				->where(['user_id' => $user_id])
+				->first();
+		$this->set(compact('enterprise','notices'));
+		$this->render('enterprise');
+		return;
+	}
+
+	protected function _engineer() {
+		$group_id = $this->Auth->user('group_id');
+		$user_id = $this->Auth->user('id');
+		$engineer = TableRegistry::get('Engineers')->find()
+				->where(['user_id' => $user_id])
+				->contain(['Users', 'Attributes'])
+				->first();
 		
-		$this->render('/Common/debug');
+		$notices = TableRegistry::get('Notices')->find('active',['group_id'=>$group_id]);
+		
+		$comments = TableRegistry::get('Comments')->find()
+				->where(['engineer_id'=>$engineer->id])
+				->group('enterprise_id')
+				->order(['max(modified)'=>'desc']);
+		
+		$comments
+				->select(['enterprise_id'])
+				->select(['engineer_id'])
+				->select(['modified' => 'max(modified)'])
+				->select(['count'=> $comments->func()->count('*')])
+				;
+
+				
+
+		$this->set(compact('engineer','notices','comments'));
+		$this->render('engineer');
+		return;
 	}
 
 }

@@ -1,26 +1,20 @@
 <?php 
 use App\Defines\Defines;
-$type_name = Defines::ATTRIBUTE_TYPE_NAME;
+
+$index_template = [
+	'data' => [
+		['key' => 'id', 'label' => 'ID', 'flags' => Defines::INDEX_FLAG_SORTABLE,'dclass' => 'text-right' ],
+		['key' => 'name', 'label' => '名称', 'flags' => Defines::INDEX_FLAG_SORTABLE,],
+		['key' => 'type', 'label' => '分類', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass' => 'text-center' , 'data_key'=>'type_name'],
+		['key' => 'note', 'label' => '備考', 'flags' => Defines::INDEX_FLAG_SORTABLE,],
+	],
+	'action' => [
+		[ 'url' => ['action' => 'edit'], 'label' => '<i class="fa fa-pencil-square-o fa-lg"></i>', 'options' => ['title' => '編集']],
+	],
+];
 ?>
-<?= $this->Html->link('Add New',['action'=>'add']) ?>
-<table class="table table-bordered table-striped">
-	<thead>
-		<tr>
-			<th>name</th>
-			<th>type</th>
-			<th>note</th>
-			<th>action</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php foreach( $attributes as $attribute ): ?>
-		<tr>
-			<td><?= h($attribute->name) ?></td>
-			<td><?= $type_name[$attribute->type] ?></td>
-			<td><?= $attribute->note ?></td>
-			<td><?= $this->Html->link('edit',['action'=>'edit',$attribute->id]) ?></td>
-		</tr>
-		<?php endforeach ?>
-	</tbody>
-</table>
-<?= $this->element( 'paginator') ?>
+<div class='text-right'>
+<a class='btn btn-default' href='<?= $this->Url->build(['action'=>'add'])?>'>新規作成</a>
+</div>
+<br>
+<?= $this->element('index', ['template' => $index_template, 'entities' => $attributes]) ?>

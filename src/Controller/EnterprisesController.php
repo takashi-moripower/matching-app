@@ -12,7 +12,18 @@ use Cake\ORM\TableRegistry;
  * @property \App\Model\Table\EnterprisesTable $Enterprises
  */
 class EnterprisesController extends AppController {
-
+	public $paginate = [
+		'sortWhitelist' => [
+			'id',
+			'Users.name',
+			'establish',
+			'capital',
+			'employee',
+		],
+		'order' => [
+			'id' => 'asc',
+		]
+	];
 	public function initialize() {
 		parent::initialize();
 		$this->_loadSearchComponents();
@@ -24,7 +35,6 @@ class EnterprisesController extends AppController {
 	 * @return \Cake\Network\Response|null
 	 */
 	public function index() {
-
 		/* 	各種パラメータによる絞り込み	 */
 		$search_default = [
 		];
@@ -32,20 +42,13 @@ class EnterprisesController extends AppController {
 		$search_param = $this->request->data + $search_default;
 		$query = $this->Enterprises->find('search', $this->Enterprises->filterParams($search_param));
 
-		/*  表示件数設定　 */
-		if (isset($search['limit'])) {
-			$this->paginate['limit'] = $search['limit'];
-		}
-
 		/* 	取得するフィールドの定義		 */
 		$contain = [
 			'Users' => ['fields' => ['name','group_id']]
 		];
-
 		$query->contain($contain);
 
 		$enterprises = $this->paginate($query);
-
 		
 		$this->set(compact('enterprises'));
 		$this->set('_serialize', ['enterprises']);
