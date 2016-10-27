@@ -13,6 +13,16 @@ use Cake\ORM\TableRegistry;
  */
 class EngineersController extends AppController {
 
+	public $paginate = [
+		'sortWhitelist' => [
+			'Users.name',
+			'birthday',
+		],
+		'order' => [
+			'id' => 'asc',
+		]
+	];
+
 	public function initialize() {
 		parent::initialize();
 		$this->_loadSearchComponents();
@@ -47,6 +57,7 @@ class EngineersController extends AppController {
 		$engineers = $this->paginate($query);
 		$attributes = $this->Engineers->Attributes->getTypedList();
 
+		$this->set( 'search' , $search_param);
 		$this->set(compact('engineers', 'attributes'));
 		$this->set('_serialize', ['engineers']);
 	}

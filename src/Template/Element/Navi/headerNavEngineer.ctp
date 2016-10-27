@@ -14,6 +14,13 @@ $items = [
 			'action'=>'edit-self'
 		]
 	],
+	[
+		'label' => 'コメント',
+		'url' => [
+			'controller' => 'comments',
+			'action'=>'index'
+		]
+	],
 ];
 
 echo $this->Element('Navi/headerNav',['items'=>$items]);

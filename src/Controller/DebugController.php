@@ -27,8 +27,14 @@ class DebugController extends AppController {
 
 		$this->redirect(['controller' => 'home', 'action' => 'index']);
 	}
-	
-	public function dummyOffers(){
+	public function dummyComments() {
+		$this->loadComponent('DummyData');
+		$this->DummyData->comments();
+
+		$this->redirect(['controller' => 'home', 'action' => 'index']);
+	}
+
+	public function dummyOffers() {
 		$this->loadComponent('DummyData');
 		$this->DummyData->offers();
 
@@ -75,10 +81,11 @@ class DebugController extends AppController {
 		$table_o = TableRegistry::get('Offers');
 		$table_o->connection()->query("TRUNCATE offers");
 		$table_o->connection()->query("TRUNCATE attributes_offers");
-		
+
 		$this->set('data', 0);
 		$this->render('/Common/debug');
 	}
+
 
 	public function loginAs($user_id = NULL) {
 		$table_u = TableRegistry::get('Users');

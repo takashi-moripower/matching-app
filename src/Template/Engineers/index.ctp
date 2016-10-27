@@ -2,56 +2,68 @@
 
 use App\Defines\Defines;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 
 $group_name = Defines::GROUP_NAME;
-$table_c = TableRegistry::get('Contacts');
 $loginUser = $this->getLoginUser();
-?>
-<div class="row">
-	<div class="col-lg-9">
-		<table class="table table-bordered table-striped">
-			<thead>
-				<tr>
-					<th>氏名</th>
-					<th>資格・技能</th>
-					<th>年齢</th>
-					<?php if (Defines::isEnterprise($loginUser['group_id'])): ?>
-						<th>技術者 <i class="fa fa-long-arrow-right"></i> 企業</th>
-						<th>企業 <i class="fa fa-long-arrow-right"></i> 技術者</th>
-					<?php endif ?>
-					<th>action</th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php foreach ($engineers as $engineer): ?>
-					<tr>
-						<td class="col-lg-2"><?= h($engineer->user->name) ?></td>
-						<td class="col-lg-7 "><?= h($engineer->attribute_names) ?></td>
-						<td class="col-lg-1"><?= $engineer->age ?></td>
+$table_c = TableRegistry::get('Contacts');
 
-						<?php
-						if (Defines::isEnterprise($loginUser['group_id'])):
-							$engineer->contact = $table_c->setEnterpriseAccess($engineer->id, $loginUser['enterprise_id'], Defines::CONTACT_RECORD_SEARCH);
-							?>
-							<td class="col-lg-1 trim"><?= $engineer->contact->engineer_record_text ?></td>
-							<td class="col-lg-1 trim"><?= $engineer->contact->enterprise_record_text ?></td>
-						<?php endif ?>
-						<td class="col-lg-1 text-center">
-							<?= $this->Html->link( '<i class="fa fa-search"></i>', ['controller' => 'engineers', 'action' => 'view', $engineer->id],['escape'=>false]) ?>
-							<?php
-							if ($this->getLoginUser('group_id') == Defines::GROUP_ADMINISTRATOR) {
-								echo $this->Html->link('<i class="fa fa-pencil"></i>', ['controller' => 'users', 'action' => 'edit', $engineer->user_id],['escape'=>false]);
-							}
-							?>
-						</td>
-					</tr>
-				<?php endforeach ?>
-			</tbody>
-		</table>
-		<?= $this->element('paginator') ?>	
+
+
+$index_template = [
+	'data' => [
+		['key' => 'Users.name', 'label' => '氏名', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_key' => 'user.name'],
+		['key' => 'attribute_names', 'label' => '技能・資格', 'flags' => 0,],
+		['key' => 'birthday', 'label' => '年齢', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_key' => 'age', 'data_class' => 'text-right'],
+	],
+];
+
+
+
+//	企業が閲覧した場合
+if (!empty($loginUser['enterprise_id'])) {
+	$enterprise_id = $loginUser['enterprise_id'];
+
+	//	コメント用callback function
+	$comment_func = function( $entity ) use( $enterprise_id ) {
+		return ['controller' => 'comments', 'action' => 'view', $entity->id, $enterprise_id];
+	};
+	
+	//	基本情報の閲覧
+	$index_template['action'][] = [ 'url' => ['controller'=>'engineers','action'=>'view'], 'label' => '<i class="fa fa-user fa-lg"></i>', 'options' => ['title' => '閲覧']];
+
+	//	プレミアコースのみコメント可
+	if ($loginUser['group_id'] == Defines::GROUP_ENTERPRISE_PREMIUM) {
+		$index_template['action'][] = [ 'url' => $comment_func, 'label' => '<i class="fa fa-comment-o fa-lg"></i>', 'options' => ['title' => 'コメント']];
+	}
+}
+
+//	管理者のみ詳細閲覧可能
+if ($loginUser['group_id'] == Defines::GROUP_ADMINISTRATOR) {
+	$index_template['action'][] = [ 'url' => ['controller'=>'engineers','action'=>'view'], 'label' => '<i class="fa fa-user fa-lg"></i>', 'options' => ['title' => '閲覧']];
+}?>
+<div class="row">
+	<div class="col-xs-9">
+		<?= $this->element('index', ['template' => $index_template, 'entities' => $engineers]) ?>
+		<?= $this->Element('paginator') ?>
 	</div>
 	<div class="col-lg-3">
 		<?= $this->Element('Engineers/search') ?>
 	</div>
-
 </div>
+
+
+<?php
+unset( $search['limit'] );
+unset( $search['page']);
+if( empty( $search )){
+	return;
+}
+if( !Defines::isEnterprise( $this->getLoginUser( 'group_id'))){
+	return;
+}
+$table_contacts = TableRegistry::get('contacts');
+foreach( $engineers as $engineer ){
+	$table_contacts->setEnterpriseAccess( $engineer->id , $enterprise_id , Defines::CONTACT_RECORD_SEARCH );
+}
+?>

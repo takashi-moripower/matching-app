@@ -28,19 +28,31 @@ use App\Defines\Defines;
 		<?php foreach ($entities as $entity): ?>
 			<tr>
 				<?php foreach ($template['data'] as $t): ?>
-					<td class='<?= Hash::get($t, 'dclass') ?>'>
+					<td class='<?= Hash::get($t, 'data_class') ?>'>
 						<?php
 						$key = Hash::get($t, 'data_key', Hash::get($t, 'key'));
-						echo h(Hash::get($entity, $key));
+						$value = Hash::get($entity, $key);
+
+						if (Hash::get($t, 'flags', 0) & Defines::INDEX_FLAG_NO_ESCAPE) {
+							echo $value;
+						} else {
+							echo h($value);
+						}
 						?>
 					</td>
 				<?php endforeach ?>
 				<?php
-				if (isset($template['action'])) {
+				if (!empty($template['action'])) {
 					echo "<td class='action link text-center'>";
 					foreach ($template['action'] as $action) {
 						$key = Hash::get($action, 'key', 'id');
-						$url = Hash::get($action, 'url', []) + [ Hash::get($entity, $key)];
+						$url = Hash::get($action, 'url', []);
+						if( is_array($url) ){
+							$url[] = Hash::get($entity, $key);
+						}
+						if(is_callable( $url )){
+							$url = $url($entity);
+						}
 						$options = Hash::get($action, 'options', []) + ['escape' => false];
 						echo $this->Html->link(Hash::get($action, 'label'), $url, $options);
 						echo ' ';

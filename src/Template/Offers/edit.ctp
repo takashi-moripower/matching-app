@@ -13,7 +13,7 @@ $attribute_selected = array_map(function($obj) {
 echo $this->Form->create($offer, ['class' => 'form-horizontal']);
 echo $this->Form->hidden('attributes[_ids]', [ 'value' => NULL]);
 ?>
-<div class="panel panel-default panel-under-tab">
+<div class="panel panel-default">
 	<table class="table">
 		<tbody>
 			<tr>

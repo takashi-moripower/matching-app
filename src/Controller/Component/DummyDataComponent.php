@@ -33,8 +33,8 @@ class DummyDataComponent extends Component {
 
 	public function enterprises() {
 		$r = 0;
-		for ($i = 1; $i < 10; $i++) {
-			$e = $this->enterprise($i);
+		for ($i = 0; $i < 10; $i++) {
+			$e = $this->enterprise($i+1);
 			if ($this->Users->save($e)) {
 				$r++;
 			}
@@ -61,8 +61,8 @@ class DummyDataComponent extends Component {
 
 	public function engineers() {
 		$r = 0;
-		for ($i = 1; $i < 100; $i++) {
-			$e = $this->engineer($i);
+		for ($i = 0; $i < 100; $i++) {
+			$e = $this->engineer($i + 1);
 			if ($this->Users->save($e)) {
 				$r++;
 			}
@@ -106,7 +106,7 @@ class DummyDataComponent extends Component {
 
 
 		foreach ($enterprises as $enterprise) {
-			for ($i = 1; $i <= 10; $i++) {
+			for ($i = 0; $i <= 10; $i++) {
 
 				$keys = array_keys($id_attributes);
 				shuffle($keys);
@@ -115,12 +115,12 @@ class DummyDataComponent extends Component {
 
 				$offer = $table_o->newEntity(
 						[
-					'title' => sprintf('%s-求人%02d', $enterprise->user->name, $i),
+					'title' => sprintf('%s-求人%02d', $enterprise->user->name, $i+1),
 					'enterprise_id' => $enterprise->id,
-					'operation1'=>rand(0,1),
-					'operation2'=>rand(0,1),
-					'operation3'=>rand(0,1),
-					'operation4'=>rand(0,1),
+					'operation1' => rand(0, 1),
+					'operation2' => rand(0, 1),
+					'operation3' => rand(0, 1),
+					'operation4' => rand(0, 1),
 					'attributes' => [ '_ids' => $attributes],
 						], [
 					'associated' => ['Attributes']
@@ -128,6 +128,54 @@ class DummyDataComponent extends Component {
 				);
 				$table_o->save($offer);
 			}
+		}
+	}
+
+	public function comments() {
+		$enterprises = TableRegistry::get('enterprises')
+				->find();
+
+		$engineer = TableRegistry::get('engineers')
+				->find()
+				->first();
+
+		$table_comments = TableRegistry::get('comments');
+
+		foreach ($enterprises as $enterprise) {
+			$a = rand(1, 1000) * 10;
+			$b = rand(1, 11);
+			$c = rand(13, 23);
+
+			$content = "日給{$a}円\r勤務時間は{$b}:00～{$c}:00です";
+
+			$new_comment = $table_comments->newEntity([
+				'enterprise_id' => $enterprise->id,
+				'engineer_id' => $engineer->id,
+				'content' => $content,
+				'flags' => Defines::COMMENT_FLAG_SEND_ENTERPRISE,
+			]);
+			$table_comments->save($new_comment);
+		}
+
+		$enterprise = TableRegistry::get('enterprises')
+				->find()
+				->first();
+		for ($i = 0; $i < 10; $i++) {
+			$new_comment = $table_comments->newEntity([
+				'enterprise_id' => $enterprise->id,
+				'engineer_id' => $engineer->id,
+				'content' => 'いいえ',
+				'flags' => Defines::COMMENT_FLAG_SEND_ENGINEER,
+			]);
+			$table_comments->save($new_comment);
+
+			$new_comment2 = $table_comments->newEntity([
+				'enterprise_id' => $enterprise->id,
+				'engineer_id' => $engineer->id,
+				'content' => 'そんな　ひどい',
+				'flags' => Defines::COMMENT_FLAG_SEND_ENTERPRISE,
+			]);
+			$table_comments->save($new_comment2);
 		}
 	}
 

@@ -49,18 +49,31 @@ class Defines {
 		self::CONTACT_RECORD_DENY => '拒絶',
 		self::CONTACT_RECORD_CHECK_REQUIMENT => '条件確認',
 	];
-	const COMMENT_TYPE_ENGINEER_TO_ENTERPRISE = 1;
-	const COMMENT_TYPE_ENTERPRISE_TO_ENGINEER = 2;
+	
 	const OFFER_OPERATION_AND = 0;
 	const OFFER_OPERATION_OR = 1;
 	const OFFER_OPERATION_NAME = [
 		self::OFFER_OPERATION_AND => 'AND',
 		self::OFFER_OPERATION_OR => 'OR',
 	];
+
 	const COMMENT_FLAG_SEND_ADMINISTRATOR = 0;
 	const COMMENT_FLAG_SEND_ENGINEER = 1;
 	const COMMENT_FLAG_SEND_ENTERPRISE = 2;
 	const COMMENT_FLAG_SEND_MASK = 0x0f;
+	
+	static function getCommentFlagSender( $group_id ){
+		switch( $group_id ){
+			case self::GROUP_ENGINEER:
+				return self::COMMENT_FLAG_SEND_ENGINEER;
+				
+			case self::GROUP_ENTERPRISE_PREMIUM:
+			case self::GROUP_ENTERPRISE_FREE:
+				return self::COMMENT_FLAG_SEND_ENTERPRISE;
+		}
+		return self::COMMENT_FLAG_SEND_ADMINISTRATOR;
+	}
+	
 	const COMMENT_FLAG_READ_ENTERPRISE = 0x10;
 	const COMMENT_FLAG_READ_ENGINEER = 0x20;
 	const COMMENT_FLAG_READ_MASK = 0xf0;
@@ -94,6 +107,6 @@ class Defines {
 	];
 	
 	const INDEX_FLAG_SORTABLE = 1;
-	const INDEX_FLAG_ACTION = 2;
+	const INDEX_FLAG_NO_ESCAPE = 2;
 	
 }

@@ -94,5 +94,9 @@ class Engineer extends Entity {
 
 		return $request;
 	}
+	
+	protected function _getCode( $value ){
+		return 'code-'. sprintf( '%04o', $this->id );
+	}
 
 }

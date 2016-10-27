@@ -82,8 +82,6 @@ class OffersController extends AppController {
 		if( Hash::get( $loginUser , 'group_id' ) == Defines::GROUP_ENGINEER ){
 			$table_c = TableRegistry::get('Contacts');
 			$table_c->setEngineerAccess( $loginUser['engineer_id'] , $offer->enterprise_id , Defines::CONTACT_RECORD_CHECK_REQUIMENT );
-			
-			debug(Defines::CONTACT_RECORD_CHECK_REQUIMENT);
 		}
 
 		$this->set('offer', $offer);

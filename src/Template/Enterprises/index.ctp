@@ -10,12 +10,12 @@ $table_c = TableRegistry::get('Contacts');
 $index_template = [
 	'data' => [
 		['key' => 'Users.name', 'label' => '企業名', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_key' => 'user.name'],
-		['key' => 'establish', 'label' => '設立', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass' => 'text-right'],
-		['key' => 'capital', 'label' => '資本金', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass' => 'text-right'],
-		['key' => 'employee', 'label' => '従業員数', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass' => 'text-right'],
+		['key' => 'establish', 'label' => '設立', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_class' => 'text-right'],
+		['key' => 'capital', 'label' => '資本金', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_class' => 'text-right'],
+		['key' => 'employee', 'label' => '従業員数', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_class' => 'text-right'],
 	],
 	'action' => [
-		[ 'url' => ['controller' => 'users', 'action' => 'view'], 'label' => '<i class="fa fa-search fa-lg"></i>', 'options' => ['title' => '閲覧']],
+		[ 'url' => ['controller' => 'enterprises', 'action' => 'view'], 'label' => '<i class="fa fa-building-o fa-lg"></i>', 'options' => ['title' => '閲覧']],
 	],
 ];
 

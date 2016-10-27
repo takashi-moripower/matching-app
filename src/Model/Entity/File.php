@@ -44,7 +44,7 @@ class File extends Entity
 	}
 	
 	public function isImage(){
-		$pattern ="/.[(png)(jpg)(jpeg)(bmp)]$/i";
+		$pattern ="/.[(png)(jpg)(jpeg)(bmp)(gif)]$/i";
 		return preg_match( $pattern , $this->name );
 	}
 }

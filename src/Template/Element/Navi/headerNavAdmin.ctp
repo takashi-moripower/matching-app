@@ -32,6 +32,14 @@ $items = [
 		]
 	],
 	[
+		'label' => '関連性',
+		'url' => ['controller' => 'contacts', 'action' => 'index']
+	],
+	[
+		'label' => 'コメント',
+		'url' => ['controller' => 'comments', 'action' => 'index']
+	],
+	[
 		'label' => '通知',
 		'url' => ['controller' => 'notices', 'action' => 'index']
 	],

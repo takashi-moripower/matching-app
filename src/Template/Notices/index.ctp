@@ -7,11 +7,11 @@ FrozenTime::setToStringFormat('yyyy-MM-dd HH:mm');
 
 $index_template = [
 	'data' => [
-		['key' => 'id', 'label' => 'ID', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass' => 'text-right'],
+		['key' => 'id', 'label' => 'ID', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_class' => 'text-right'],
 		['key' => 'content', 'label' => '内容', 'flags' => Defines::INDEX_FLAG_SORTABLE,],
-		['key' => 'start', 'label' => '開始', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass' => 'text-right',],
-		['key' => 'end', 'label' => '終了', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass' => 'text-right'],
-		['key' => 'flags', 'label' => '対象', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass'=>'text-center','data_key' => 'flags_text'],
+		['key' => 'start', 'label' => '開始', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_class' => 'text-right',],
+		['key' => 'end', 'label' => '終了', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_class' => 'text-right'],
+		['key' => 'flags', 'label' => '対象', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_class'=>'text-center','data_key' => 'flags_text'],
 	],
 	'action' => [
 		[ 'url' => ['action' => 'edit'], 'label' => '<i class="fa fa-pencil-square-o fa-lg"></i>', 'options' => ['title' => '編集']],

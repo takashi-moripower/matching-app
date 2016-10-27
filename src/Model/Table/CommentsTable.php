@@ -60,7 +60,7 @@ class CommentsTable extends Table {
 				->allowEmpty('id', 'create');
 
 		$validator
-				->allowEmpty('content');
+				->notEmpty('content');
 
 		return $validator;
 	}
@@ -77,6 +77,18 @@ class CommentsTable extends Table {
 		$rules->add($rules->existsIn(['enterprise_id'], 'Enterprises'));
 
 		return $rules;
+	}
+	
+	public function findCollection( Query $query , $options ){
+
+		$query
+				->select(['enterprise_id'])
+				->select(['engineer_id'])
+				->select(['last_modified' => 'max(modified)'])
+				->select(['count'=> $query->func()->count('*')])
+				->order(['last_modified'=>'desc']);
+		
+		return $query;
 	}
 
 }

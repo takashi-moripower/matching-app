@@ -6,6 +6,9 @@ use Cake\Utility\Hash;
 
 $loginUser = $this->getLoginUser();
 ?>
+<ul>
+	<li><?= $this->Html->link('新規作成', ['controller'=>'offers','action'=>'add'])?></li>
+</ul>
 <div class="row">
 	<div class="col-lg-9">
 		<?php
@@ -33,16 +36,15 @@ $loginUser = $this->getLoginUser();
 							<td><?= h($offer->title) ?></td>
 							<td><?= h($offer->attribute_text) ?></td>
 							<td class="text-center">
-								<?= $this->Acl->link('<i class="fa fa-search"></i>', ['controller' => 'offers', 'action' => 'search', $offer->id], ['escape' => false]) ?>
-								<?= $this->Acl->link('<i class="fa fa-newspaper-o"></i>', ['controller' => 'offers', 'action' => 'view', $offer->id], ['escape' => false]) ?>
-								<?= $this->Acl->link('<i class="fa fa-pencil-square-o"></i>', ['controller' => 'offers', 'action' => 'edit', $offer->id], ['escape' => false]) ?>
+								<?= $this->Acl->link('<i class="fa fa-search"></i>', ['controller' => 'offers', 'action' => 'search', $offer->id], ['escape' => false , 'title'=>'検索']) ?>
+								<?= $this->Acl->link('<i class="fa fa-newspaper-o"></i>', ['controller' => 'offers', 'action' => 'view', $offer->id], ['escape' => false, 'title'=>'閲覧']) ?>
+								<?= $this->Acl->link('<i class="fa fa-pencil-square-o"></i>', ['controller' => 'offers', 'action' => 'edit', $offer->id], ['escape' => false, 'title'=>'編集']) ?>
 							</td>
 						</tr>
 					<?php endforeach ?>
 				</tbody>
 			</table>
 		</div>
-
 		<?= $this->element('paginator') ?>	
 	</div>
 	<div class="col-lg-3">

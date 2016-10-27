@@ -3,9 +3,9 @@ use App\Defines\Defines;
 
 $index_template = [
 	'data' => [
-		['key' => 'id', 'label' => 'ID', 'flags' => Defines::INDEX_FLAG_SORTABLE,'dclass' => 'text-right' ],
+		['key' => 'id', 'label' => 'ID', 'flags' => Defines::INDEX_FLAG_SORTABLE,'data_class' => 'text-right' ],
 		['key' => 'name', 'label' => '名称', 'flags' => Defines::INDEX_FLAG_SORTABLE,],
-		['key' => 'type', 'label' => '分類', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'dclass' => 'text-center' , 'data_key'=>'type_name'],
+		['key' => 'type', 'label' => '分類', 'flags' => Defines::INDEX_FLAG_SORTABLE, 'data_class' => 'text-center' , 'data_key'=>'type_name'],
 		['key' => 'note', 'label' => '備考', 'flags' => Defines::INDEX_FLAG_SORTABLE,],
 	],
 	'action' => [

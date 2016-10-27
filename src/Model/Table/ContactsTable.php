@@ -117,6 +117,13 @@ class ContactsTable extends Table {
 		return $entity;
 	}
 
+	/**
+	 * 企業からのアクセス
+	 * @param type $engineer_id
+	 * @param type $enterprise_id
+	 * @param type $flag
+	 * @return type
+	 */
 	public function setEnterpriseAccess( $engineer_id , $enterprise_id , $flag ){
 		$entity = $this->getByEE( $engineer_id , $enterprise_id );
 		
@@ -132,6 +139,13 @@ class ContactsTable extends Table {
 		return $entity;
 	}
 
+	/**
+	 * 技術者からのアクセス
+	 * @param type $engineer_id
+	 * @param type $enterprise_id
+	 * @param type $flag
+	 * @return type
+	 */
 	public function setEngineerAccess( $engineer_id , $enterprise_id , $flag ){
 		$entity = $this->getByEE( $engineer_id , $enterprise_id );
 

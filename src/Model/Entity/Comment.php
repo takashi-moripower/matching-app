@@ -67,5 +67,17 @@ class Comment extends Entity {
 		
 		return $last;
 	}
+	
+	protected function _getContentFile(){
+		if( empty($this->file) ){
+			return $this->content;
+		}
+		
+		$url = \Cake\Routing\Router::url(['controller'=>'comments','action'=>'load',$this->id]);
+		$label = h($this->content);
+		$text = "<a href='{$url}'>{$label}</a>";
+		
+		return $text;
+	}
 
 }

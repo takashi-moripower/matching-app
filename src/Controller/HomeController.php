@@ -45,11 +45,21 @@ class HomeController extends AppController {
 	protected function _enterprise() {
 		$group_id = $this->Auth->user('group_id');
 		$user_id = $this->Auth->user('id');
-		$notices = TableRegistry::get('Notices')->find('active',['group_id'=>$group_id]);
+		
 		$enterprise = TableRegistry::get('Enterprises')->find()
 				->where(['user_id' => $user_id])
 				->first();
-		$this->set(compact('enterprise','notices'));
+		
+		$notices = TableRegistry::get('Notices')->find('active',['group_id'=>$group_id]);
+
+		$comments = TableRegistry::get('Comments')->find()
+				->where(['enterprise_id'=>$enterprise->id])
+				->group('engineer_id')
+				->find('collection',[])
+				;
+		
+		
+		$this->set(compact('enterprise','notices','comments'));
 		$this->render('enterprise');
 		return;
 	}
@@ -67,15 +77,8 @@ class HomeController extends AppController {
 		$comments = TableRegistry::get('Comments')->find()
 				->where(['engineer_id'=>$engineer->id])
 				->group('enterprise_id')
-				->order(['max(modified)'=>'desc']);
-		
-		$comments
-				->select(['enterprise_id'])
-				->select(['engineer_id'])
-				->select(['modified' => 'max(modified)'])
-				->select(['count'=> $comments->func()->count('*')])
+				->find('collection',[])
 				;
-
 				
 
 		$this->set(compact('engineer','notices','comments'));

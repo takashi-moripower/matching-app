@@ -4,6 +4,9 @@ use App\Defines\Defines;
 
 $loginUser = $this->getLoginUser();
 
+
+$engineer_label = $contact->engineer->user->name;
+
 switch ($loginUser['group_id']) {
 	case Defines::GROUP_ENGINEER:
 		$tab = 'Enterprises/viewTabs';
@@ -15,19 +18,24 @@ switch ($loginUser['group_id']) {
 		break;
 
 	case Defines::GROUP_ADMINISTRATOR:
-		$tab = 'Contacts/viewTabs';
+		$tab = NULL;
+		break;
 }
+
+$panel_class = $tab ? 'panel-under-tab' : '';
 ?>
 <div class="col-lg-12">
-	<?= $this->Element($tab, ['engineer_id' => $contact->engineer_id, 'enterprise_id' => $contact->enterprise_id]) ?>
+	<?php if ($tab): ?>
+		<?= $this->Element($tab, ['engineer_id' => $contact->engineer_id, 'enterprise_id' => $contact->enterprise_id]) ?>
+	<?php endif ?>
 
-	<div class="panel panel-default panel-under-tab">
+	<div class="panel panel-default <?= $panel_class ?>">
 		<table class="table table-bordered table-view table-view-engineers">
 			<tbody>
 				<tr>
 					<th></th>
-					<td><?= h($contact->engineer->user->name) ?> <i class="fa fa-long-arrow-right"></i>　<?= h($contact->enterprise->user->name) ?></td>
-					<td><?= h($contact->enterprise->user->name) ?> <i class="fa fa-long-arrow-right"></i>　<?= h($contact->engineer->user->name) ?></td>
+					<td><?= h($engineer_label) ?> <i class="fa fa-long-arrow-right"></i>　<?= h($contact->enterprise->user->name) ?></td>
+					<td><?= h($contact->enterprise->user->name) ?> <i class="fa fa-long-arrow-right"></i>　<?= h($engineer_label) ?></td>
 				</tr>
 				<tr>
 					<th>アクセス実績</th>
