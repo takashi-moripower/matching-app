@@ -43,6 +43,12 @@ class ContactsController extends AppController {
 				])
 				->first();
 
+		if (empty($contact)) {
+			$contact = $this->Contacts->newEntity(['engineer_id' => $engineer_id, 'enterprise_id' => $enterprise_id]);
+			$contact->engineer = $this->Contacts->Engineers->get($engineer_id, ['contain' => 'Users']);
+			$contact->enterprise = $this->Contacts->Enterprises->get($enterprise_id, ['contain' => 'Users']);
+		}
+
 		$this->set(['contact' => $contact]);
 	}
 
@@ -50,10 +56,13 @@ class ContactsController extends AppController {
 
 		$f = Defines::CONTACT_RECORD_COMMENT;
 
-		$contacts = $this->Contacts->find()
+
+
+		$query = $this->Contacts->find()
 				->contain(['Engineers' => [ 'Users']])
 				->select(['comment' => "sum( CASE WHEN enterprise_record & " . Defines::CONTACT_RECORD_COMMENT . " THEN 1 ELSE 0 END )"])
 				->select(['search' => "sum( CASE WHEN enterprise_record & " . Defines::CONTACT_RECORD_SEARCH . " THEN 1 ELSE 0 END )"])
+				->select(['view' => "sum( CASE WHEN enterprise_record & " . Defines::CONTACT_RECORD_VIEW . " THEN 1 ELSE 0 END )"])
 				->select(['count' => "sum( enterprise_count )"])
 				->select('engineer_id')
 				->select('Engineers.id')
@@ -61,9 +70,21 @@ class ContactsController extends AppController {
 				->select('Users.id')
 				->select(['user_name' => 'Users.name'])
 				->group('engineer_id')
-
-
 		;
+
+		$this->paginate = [
+			'order' => ['count' => 'desc','comment'=>'desc','search'=>'desc'],
+			'sortWhitelist' => [
+				'id',
+				'comment',
+				'view',
+				'search',
+				'count',
+			],
+		];
+
+		$contacts = $this->paginate($query);
+
 
 		$this->set('contacts', $contacts);
 	}

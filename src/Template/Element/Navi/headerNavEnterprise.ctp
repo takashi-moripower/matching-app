@@ -24,7 +24,7 @@ $items = [
 ];
 
 if ($this->getLoginUser('group_id') == \App\Defines\Defines::GROUP_ENTERPRISE_PREMIUM) {
-	array_unshift($items, [
+	array_push($items, [
 		'label' => 'コメント',
 		'url' => [
 			'controller' => 'comments',

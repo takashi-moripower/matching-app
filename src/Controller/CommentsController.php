@@ -148,6 +148,11 @@ class CommentsController extends AppController {
 				->order(['modified'=>'desc' , 'id'=>'desc'])
 				->first();
 		
+		//直前のコメントが存在しない場合true
+		if(empty($last)){
+			return true;
+		}
+		
 		//コメント内容が違う場合はtrue
 		if( $last->content != $entity->content ){
 			return true;
