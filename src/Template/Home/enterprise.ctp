@@ -12,4 +12,4 @@
 <?php
 echo $this->Element('notices',['notices'=>$notices]);
 
-echo $this->Element('Enterprises/comments',['label'=>'新着コメント','panel_type'=>'success']);
+echo $this->Element('Comments/list',['type'=>'engineer','label'=>'新着コメント','panel_type'=>'success','sort'=>false]);

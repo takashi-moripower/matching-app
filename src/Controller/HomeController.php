@@ -45,21 +45,20 @@ class HomeController extends AppController {
 	protected function _enterprise() {
 		$group_id = $this->Auth->user('group_id');
 		$user_id = $this->Auth->user('id');
-		
+
 		$enterprise = TableRegistry::get('Enterprises')->find()
 				->where(['user_id' => $user_id])
 				->first();
-		
-		$notices = TableRegistry::get('Notices')->find('active',['group_id'=>$group_id]);
 
-		$comments = TableRegistry::get('Comments')->find()
-				->where(['enterprise_id'=>$enterprise->id])
-				->group('engineer_id')
-				->find('collection',[])
-				;
-		
-		
-		$this->set(compact('enterprise','notices','comments'));
+		$notices = TableRegistry::get('Notices')->find('active', ['group_id' => $group_id]);
+
+
+		$table_c = TableRegistry::get('Comments');
+		$comments = $table_c->find()
+				->where(['enterprise_id' => $enterprise->id])
+				->find('collection')
+		;
+		$this->set(compact('enterprise', 'notices', 'comments'));
 		$this->render('enterprise');
 		return;
 	}
@@ -71,17 +70,18 @@ class HomeController extends AppController {
 				->where(['user_id' => $user_id])
 				->contain(['Users', 'Attributes'])
 				->first();
-		
-		$notices = TableRegistry::get('Notices')->find('active',['group_id'=>$group_id]);
-		
-		$comments = TableRegistry::get('Comments')->find()
-				->where(['engineer_id'=>$engineer->id])
-				->group('enterprise_id')
-				->find('collection',[])
-				;
-				
 
-		$this->set(compact('engineer','notices','comments'));
+		$notices = TableRegistry::get('Notices')->find('active', ['group_id' => $group_id]);
+
+		$table_c = TableRegistry::get('Comments');
+		$comments = $table_c->find()
+				->where(['engineer_id' => $engineer->id])
+				->find('collection')
+				;
+
+		debug( $comments );
+
+		$this->set(compact('engineer', 'notices', 'comments'));
 		$this->render('engineer');
 		return;
 	}

@@ -8,5 +8,6 @@
 echo $this->Element('notices', ['notices' => $notices]);
 echo $this->Element('Engineers/warning');
 
-echo $this->Element('Engineers/comments',['label'=>'新着コメント','panel_type'=>'success']);
+
+echo $this->Element('Comments/list',['type'=>'engineer','label'=>'新着コメント','panel_type'=>'success','sort'=>false]);
 

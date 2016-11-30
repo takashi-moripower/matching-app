@@ -15,16 +15,25 @@ use Cake\ORM\TableRegistry;
 class CommentsController extends AppController {
 
 	public $paginate = [
+		'order' => ['last_modified' => 'desc'],
 		'sortWhitelist' => [
 			'id',
-			'engineer_id',
-			'enterprise_id',
+			'engineer_name',
+			'enterprise_name',
+			'content',
+			'read_engineer',
+			'raad_enterprise',
+			'direction',
+			'count',
 			'modified',
 		],
-		'order' => [
-			'id' => 'asc',
-		]
+		'contain' => [],
 	];
+
+	public function initialize() {
+		parent::initialize();
+		$this->_loadSearchComponents();
+	}
 
 	/**
 	 * Index method
@@ -46,41 +55,33 @@ class CommentsController extends AppController {
 	}
 
 	protected function _indexEnterprise() {
-		$this->paginate = [
-		];
 
 		$enterprise_id = $this->_getLoginUser('enterprise_id');
 
-		$query = $this->Comments->find()
+		$query = $this->Comments
+				->find('collection')
 				->where(['enterprise_id' => $enterprise_id])
-				->group('engineer_id')
-				->find('collection');
-
+				->find('search', $this->Comments->filterParams($this->request->data))
+		;
 		$comments = $this->paginate($query);
 
-		$enterprise = $this->Comments->Enterprises->get($enterprise_id);
-
-		$this->set(compact('comments', 'enterprise'));
+		$this->set(compact('comments'));
 		$this->set('_serialize', ['comments']);
 		$this->render('indexEnterprise');
 	}
 
 	protected function _indexEngineer() {
-		$this->paginate = [
-		];
 
 		$engineer_id = $this->_getLoginUser('engineer_id');
 
-		$query = $this->Comments->find()
+		$query = $this->Comments
+				->find('collection')
 				->where(['engineer_id' => $engineer_id])
-				->group('enterprise_id')
-				->find('collection');
+		;
 
 		$comments = $this->paginate($query);
 
-		$engineer = $this->Comments->Engineers->get($engineer_id);
-
-		$this->set(compact('comments', 'engineer'));
+		$this->set(compact('comments'));
 		$this->set('_serialize', ['comments']);
 		$this->render('indexEngineer');
 	}
@@ -113,7 +114,7 @@ class CommentsController extends AppController {
 		if ($this->request->is(['post', 'put', 'patch'])) {
 			$new_comment = $this->Comments->newEntity($this->request->data);
 
-			if ($this->_checkRepeat($engineer_id , $enterprise_id , $new_comment)) {
+			if ($this->_checkRepeat($engineer_id, $enterprise_id, $new_comment)) {
 				if ($result = $this->Comments->save($new_comment)) {
 					$this->Flash->success('コメントは正常に送信されました');
 					$this->_setContact($new_comment);
@@ -142,27 +143,27 @@ class CommentsController extends AppController {
 		$this->set(compact('comments', 'engineer', 'enterprise', 'new_comment'));
 	}
 
-	protected function _checkRepeat($engineer_id , $enterprise_id , $entity) {
+	protected function _checkRepeat($engineer_id, $enterprise_id, $entity) {
 		$last = $this->Comments->find()
-				->where(['engineer_id'=>$engineer_id,'enterprise_id'=>$enterprise_id])
-				->order(['modified'=>'desc' , 'id'=>'desc'])
+				->where(['engineer_id' => $engineer_id, 'enterprise_id' => $enterprise_id])
+				->order(['modified' => 'desc', 'id' => 'desc'])
 				->first();
-		
+
 		//直前のコメントが存在しない場合true
-		if(empty($last)){
+		if (empty($last)) {
 			return true;
 		}
-		
+
 		//コメント内容が違う場合はtrue
-		if( $last->content != $entity->content ){
+		if ($last->content != $entity->content) {
 			return true;
 		}
-		
+
 		//送信者が違う場合はtrue
-		if( 	$last->flags & Defines::COMMENT_FLAG_SEND_MASK != $entity->flags & Defines::COMMENT_FLAG_SEND_MASK ){
+		if ($last->flags & Defines::COMMENT_FLAG_SEND_MASK != $entity->flags & Defines::COMMENT_FLAG_SEND_MASK) {
 			return false;
 		}
-		
+
 		return false;
 	}
 
@@ -174,12 +175,16 @@ class CommentsController extends AppController {
 		if ($this->_getLoginUser('engineer_id') == $engineer_id) {
 			foreach ($comments as $comment) {
 				$comment->flags |= Defines::COMMENT_FLAG_READ_ENGINEER;
+				//modifiedを更新しない
+				$comment->dirty('modified', true);
 				$this->Comments->save($comment);
 			}
 		}
 		if ($this->_getLoginUser('enterprise_id') == $enterprise_id) {
 			foreach ($comments as $comment) {
 				$comment->flags |= Defines::COMMENT_FLAG_READ_ENTERPRISE;
+				//modifiedを更新しない
+				$comment->dirty('modified', true);
 				$this->Comments->save($comment);
 			}
 		}
@@ -266,6 +271,21 @@ class CommentsController extends AppController {
 			$this->response->type($matches[2]);
 		}
 		$this->response->body($img);
+	}
+
+	public function debug() {
+
+		$query = $this->Comments
+				->find('EngineerName')
+				->find('EnterpriseName')
+				->where(['engineer_id' => 1, 'enterprise_id' => 10])
+
+		;
+
+		$comments = $this->paginate($query);
+
+		$this->set('data', $comments->toArray());
+		$this->render('/Common/debug');
 	}
 
 }

@@ -11,7 +11,6 @@ $loginUser = $this->getLoginUser();
 
 if ( $loginUser['group_id'] == Defines::GROUP_ENGINEER ) {
 	$tabs += [
-		'相互関心度' => ['controller' => 'contacts', 'action' => 'view', $loginUser['engineer_id'] , $enterprise_id ],
 		'コメント' => ['controller' => 'comments', 'action' => 'view', $loginUser['engineer_id'] , $enterprise_id ],
 	];
 }

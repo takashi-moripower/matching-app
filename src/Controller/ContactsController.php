@@ -52,11 +52,11 @@ class ContactsController extends AppController {
 		$this->set(['contact' => $contact]);
 	}
 
+	/**
+	 * 技術者ランキング
+	 */
 	public function rankEngineer() {
-
 		$f = Defines::CONTACT_RECORD_COMMENT;
-
-
 
 		$query = $this->Contacts->find()
 				->contain(['Engineers' => [ 'Users']])
@@ -83,10 +83,19 @@ class ContactsController extends AppController {
 			],
 		];
 
+		//	ランキング10位のアクセス数
+		$border = $this->Contacts->getBorder(10);
+		
 		$contacts = $this->paginate($query);
 
-
-		$this->set('contacts', $contacts);
+		$this->set(compact('contacts','border'));
 	}
 
+	
+	public function debug(){
+		$data = $this->Contacts->getBorder();
+		
+		$this->set('data',$data);
+		$this->render('/Common/debug');
+	}
 }

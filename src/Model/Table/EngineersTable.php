@@ -51,6 +51,7 @@ class EngineersTable extends Table {
 		$this->belongsTo('Users', [
 			'foreignKey' => 'user_id',
 			'joinType' => 'INNER',
+			'conditions' => ['Users.expunge is Not' => Defines::USER_EXPUNGE_TRUE],
 		]);
 
 		$this->belongsToMany('Attributes', [

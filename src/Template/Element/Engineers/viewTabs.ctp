@@ -10,13 +10,7 @@ $loginUser = $this->getLoginUser();
 
 if ( $loginUser['group_id'] == Defines::GROUP_ENTERPRISE_PREMIUM ){
 	$tabs += [
-		'相互関心度' => ['controller' => 'contacts', 'action' => 'view', $engineer_id, $loginUser['enterprise_id']],
 		'コメント' => ['controller' => 'comments', 'action' => 'view', $engineer_id, $loginUser['enterprise_id']],
-	];
-}
-if ( $loginUser['group_id'] == Defines::GROUP_ENTERPRISE_FREE ){
-	$tabs += [
-		'相互関心度' => ['controller' => 'contacts', 'action' => 'view', $engineer_id, $loginUser['enterprise_id']],
 	];
 }
 ?>

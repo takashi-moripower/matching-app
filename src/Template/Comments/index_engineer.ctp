@@ -1,3 +1,3 @@
 <?php
-echo $this->Element('Engineers/comments');
+echo $this->Element('Comments/list',['type'=>'engineer']);
 echo $this->Element('paginator');

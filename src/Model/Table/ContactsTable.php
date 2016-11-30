@@ -162,4 +162,19 @@ class ContactsTable extends Table {
 		
 		return $entity;
 	}
+	
+	public function getBorder( $rank = 10 ){
+		$result = $this->find()
+				->select(['count' => "sum( enterprise_count )"])
+				->group( 'engineer_id' )
+				->order(['count' => 'desc'])
+				->limit(1)
+				->offset($rank)
+				->first();
+		
+		if( $result ){
+			return $result->count;
+		}
+		return 0;
+	}
 }

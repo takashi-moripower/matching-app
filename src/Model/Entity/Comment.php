@@ -68,7 +68,7 @@ class Comment extends Entity {
 		return $last;
 	}
 	
-	protected function _getContentFile(){
+	protected function _getContentWithFile(){
 		if( empty($this->file) ){
 			return $this->content;
 		}
@@ -78,6 +78,20 @@ class Comment extends Entity {
 		$text = "<a href='{$url}'>{$label}</a>";
 		
 		return $text;
+	}
+	
+	protected function _getDirectionText(){
+		$flag_sender = $this->flags & Defines::COMMENT_FLAG_SEND_MASK;
+		switch( $flag_sender ){
+			case Defines::COMMENT_FLAG_SEND_ADMINISTRATOR:
+				return '管理者';
+				
+			case Defines::COMMENT_FLAG_SEND_ENGINEER:
+				return  '技術者→企業';
+				
+			case Defines::COMMENT_FLAG_SEND_ENTERPRISE:
+				return  '企業→技術者';
+		}
 	}
 
 }
