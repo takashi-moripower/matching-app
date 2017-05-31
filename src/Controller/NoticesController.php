@@ -11,98 +11,101 @@ use App\Controller\AppController;
  */
 class NoticesController extends AppController {
 
-	/**
-	 * Index method
-	 *
-	 * @return \Cake\Network\Response|null
-	 */
-	public function index() {
-		$notices = $this->paginate($this->Notices);
+    /**
+     * Index method
+     *
+     * @return \Cake\Network\Response|null
+     */
+    public function index() {
+        $notices = $this->paginate($this->Notices);
 
-		$this->set(compact('notices'));
-		$this->set('_serialize', ['notices']);
-	}
+        $this->set(compact('notices'));
+        $this->set('_serialize', ['notices']);
+    }
 
-	/**
-	 * View method
-	 *
-	 * @param string|null $id Notice id.
-	 * @return \Cake\Network\Response|null
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 */
-	public function view($id = null) {
-		$notice = $this->Notices->get($id, [
-			'contain' => []
-		]);
+    /**
+     * View method
+     *
+     * @param string|null $id Notice id.
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null) {
+        $notice = $this->Notices->get($id, [
+            'contain' => []
+        ]);
 
-		$this->set('notice', $notice);
-		$this->set('_serialize', ['notice']);
-	}
+        $this->set('notice', $notice);
+        $this->set('_serialize', ['notice']);
+    }
 
-	/**
-	 * Add method
-	 *
-	 * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
-	 */
-	public function add() {
-		$notice = $this->Notices->newEntity();
-		if ($this->request->is('post')) {
-			$notice = $this->Notices->patchEntity($notice, $this->request->data);
-			if ($this->Notices->save($notice)) {
-				$this->Flash->success(__('The notice has been saved.'));
+    /**
+     * Add method
+     *
+     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     */
+    public function add() {
+        $notice = $this->Notices->newEntity();
+        if ($this->request->is('post')) {
+            $notice = $this->Notices->patchEntity($notice, $this->request->data);
+            if ($this->Notices->save($notice)) {
+                $this->Flash->success(__('The notice has been saved.'));
 
-				return $this->redirect(['action' => 'index']);
-			} else {
-				$this->Flash->error(__('The notice could not be saved. Please, try again.'));
-			}
-		}
-		$this->set(compact('notice'));
-		$this->set('_serialize', ['notice']);
-		$this->render('edit');
-	}
+                return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('The notice could not be saved. Please, try again.'));
+            }
+        }
+        $this->set(compact('notice'));
+        $this->set('_serialize', ['notice']);
+        $this->render('edit');
+    }
 
-	/**
-	 * Edit method
-	 *
-	 * @param string|null $id Notice id.
-	 * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
-	 * @throws \Cake\Network\Exception\NotFoundException When record not found.
-	 */
-	public function edit($id = null) {
-		$notice = $this->Notices->get($id, [
-			'contain' => []
-		]);
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			$notice = $this->Notices->patchEntity($notice, $this->request->data);
-			if ($this->Notices->save($notice)) {
-				$this->Flash->success(__('The notice has been saved.'));
+    /**
+     * Edit method
+     *
+     * @param string|null $id Notice id.
+     * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function edit($id = null) {
+        $notice = $this->Notices->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $notice = $this->Notices->patchEntity($notice, $this->request->data);
+            if ($this->Notices->save($notice)) {
+                $this->Flash->success(__('The notice has been saved.'));
 
-				return $this->redirect(['action' => 'index']);
-			} else {
-				$this->Flash->error(__('The notice could not be saved. Please, try again.'));
-			}
-		}
-		$this->set(compact('notice'));
-		$this->set('_serialize', ['notice']);
-	}
+                return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('The notice could not be saved. Please, try again.'));
+            }
+        }
+        $this->set(compact('notice'));
+        $this->set('_serialize', ['notice']);
+    }
 
-	/**
-	 * Delete method
-	 *
-	 * @param string|null $id Notice id.
-	 * @return \Cake\Network\Response|null Redirects to index.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 */
-	public function delete($id = null) {
-		$this->request->allowMethod(['post', 'delete']);
-		$notice = $this->Notices->get($id);
-		if ($this->Notices->delete($notice)) {
-			$this->Flash->success(__('The notice has been deleted.'));
-		} else {
-			$this->Flash->error(__('The notice could not be deleted. Please, try again.'));
-		}
+    /**
+     * Delete method
+     *
+     * @param string|null $id Notice id.
+     * @return \Cake\Network\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete() {
+        $this->request->allowMethod(['post']);
 
-		return $this->redirect(['action' => 'index']);
-	}
+        $id = $this->request->data('id');
+        
+        $notice = $this->Notices->get($id);
+        if ($this->Notices->delete($notice)) {
+            $this->Flash->success(__('The notice has been deleted.'));
+        } else {
+            $this->Flash->error(__('The notice could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
 
 }

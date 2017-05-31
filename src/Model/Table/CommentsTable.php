@@ -26,153 +26,159 @@ use Search\Manager;
  */
 class CommentsTable extends Table {
 
-	/**
-	 * Initialize method
-	 *
-	 * @param array $config The configuration for the Table.
-	 * @return void
-	 */
-	public function initialize(array $config) {
-		parent::initialize($config);
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config) {
+        parent::initialize($config);
 
-		$this->table('comments');
-		$this->displayField('id');
-		$this->primaryKey('id');
+        $this->table('comments');
+        $this->displayField('id');
+        $this->primaryKey('id');
 
-		$this->addBehavior('Timestamp');
-		$this->addBehavior('Search.Search');
+        $this->addBehavior('Timestamp');
+        $this->addBehavior('Search.Search');
 
-		$this->belongsTo('Engineers', [
-			'foreignKey' => 'engineer_id',
-			'joinType' => 'INNER'
-		]);
-		$this->belongsTo('Enterprises', [
-			'foreignKey' => 'enterprise_id',
-			'joinType' => 'INNER'
-		]);
-	}
+        $this->belongsTo('Engineers', [
+            'foreignKey' => 'engineer_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Enterprises', [
+            'foreignKey' => 'enterprise_id',
+            'joinType' => 'INNER'
+        ]);
+    }
 
-	/**
-	 * Default validation rules.
-	 *
-	 * @param \Cake\Validation\Validator $validator Validator instance.
-	 * @return \Cake\Validation\Validator
-	 */
-	public function validationDefault(Validator $validator) {
-		$validator
-				->integer('id')
-				->allowEmpty('id', 'create');
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator) {
+        $validator
+                ->integer('id')
+                ->allowEmpty('id', 'create');
 
-		$validator
-				->notEmpty('content');
+        $validator
+                ->notEmpty('content');
 
-		return $validator;
-	}
+        return $validator;
+    }
 
-	/**
-	 * Returns a rules checker object that will be used for validating
-	 * application integrity.
-	 *
-	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-	 * @return \Cake\ORM\RulesChecker
-	 */
-	public function buildRules(RulesChecker $rules) {
-		$rules->add($rules->existsIn(['engineer_id'], 'Engineers'));
-		$rules->add($rules->existsIn(['enterprise_id'], 'Enterprises'));
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules) {
+        $rules->add($rules->existsIn(['engineer_id'], 'Engineers'));
+        $rules->add($rules->existsIn(['enterprise_id'], 'Enterprises'));
 
-		return $rules;
-	}
+        return $rules;
+    }
 
-	public function findCollection(Query $query, $options) {
+    /**
+     * コメント履歴用
+     * @param Query $query
+     * @param type $options
+     * @return Query
+     */
+    public function findCollection(Query $query, $options) {
 
-		if (Hash::get($options, 'name', true)) {
-			$query
-					->find('EngineerName')
-					->find('EnterpriseName');
-		}
-
-
-		$c2 = $this->find()
-				->from(['c2' => 'comments'])
-				->where('c2.engineer_id = Comments.engineer_id')
-				->where('c2.enterprise_id = Comments.enterprise_id ')
-		;
-
-		$c3 = $c2->cleanCopy();
+        if (Hash::get($options, 'name', true)) {
+            $query
+                ->find('EngineerName')
+                ->find('EnterpriseName');
+        }
 
 
-		$query
-				->where(['Comments.modified' => $c2->select(['last_modified' => 'max(c2.modified)'])])
-				->select(['count' => $c3->select(['count' => 'count(*)'])])
-				->select($this)
-				->select(['read_engineer' => 'flags & ' . Defines::COMMENT_FLAG_READ_ENGINEER])
-				->select(['read_enterprise' => 'flags & ' . Defines::COMMENT_FLAG_READ_ENTERPRISE])
-				->select(['direction' => 'flags & ' . Defines::COMMENT_FLAG_SEND_MASK])
-		;
+        $c2 = $this->find()
+            ->from(['c2' => 'comments'])
+            ->where('c2.engineer_id = Comments.engineer_id')
+            ->where('c2.enterprise_id = Comments.enterprise_id ')
+        ;
 
-		return $query;
-	}
+        $c3 = $c2->cleanCopy();
 
-	/**
-	 * engineer_nameを取得
-	 * @param Query $query
-	 * @param type $options
-	 * @return Query
-	 */
-	public function findEngineerName(Query $query, $options) {
-		$query
-				->join([
-					'Engineers' => [
-						'table' => 'engineers',
-						'type' => 'left',
-						'conditions' => 'Engineers.id = Comments.engineer_id'
-					],
-					'EngineerUser' => [
-						'table' => 'users',
-						'type' => 'left',
-						'conditions' => 'EngineerUser.id = Engineers.user_id'
-					]
-				])
-				->select(['engineer_name' => 'EngineerUser.name']);
 
-		return $query;
-	}
+        $query
+            ->where(['Comments.modified' => $c2->select(['last_modified' => 'max(c2.modified)'])])
+            ->select(['count' => $c3->select(['count' => 'count(*)'])])
+            ->select($this)
+            ->select(['read_engineer' => 'flags & ' . Defines::COMMENT_FLAG_READ_ENGINEER])
+            ->select(['read_enterprise' => 'flags & ' . Defines::COMMENT_FLAG_READ_ENTERPRISE])
+            ->select(['direction' => 'flags & ' . Defines::COMMENT_FLAG_SEND_MASK])
+        ;
 
-	/**
-	 * enterprise_nameを取得
-	 * @param Query $query
-	 * @param type $options
-	 * @return Query
-	 */
-	public function findEnterpriseName(Query $query, $options) {
-		$query
-				->join([
-					'Enterprises' => [
-						'table' => 'enterprises',
-						'type' => 'left',
-						'conditions' => 'Enterprises.id = Comments.enterprise_id'
-					],
-					'EnterpriseUser' => [
-						'table' => 'users',
-						'type' => 'left',
-						'conditions' => 'EnterpriseUser.id = Enterprises.user_id'
-					]
-				])
-				->select(['enterprise_name' => 'EnterpriseUser.name']);
+        return $query;
+    }
 
-		return $query;
-	}
+    /**
+     * engineer_nameを取得
+     * @param Query $query
+     * @param type $options
+     * @return Query
+     */
+    public function findEngineerName(Query $query, $options) {
+        $query
+                ->join([
+                    'Engineers' => [
+                        'table' => 'engineers',
+                        'type' => 'left',
+                        'conditions' => 'Engineers.id = Comments.engineer_id'
+                    ],
+                    'EngineerUser' => [
+                        'table' => 'users',
+                        'type' => 'left',
+                        'conditions' => 'EngineerUser.id = Engineers.user_id'
+                    ]
+                ])
+                ->select(['engineer_name' => 'EngineerUser.name']);
 
-	/**
-	 * 検索コンポーネント用
-	 * @return Manager
-	 */
-	public function searchConfiguration() {
-		$search = new Manager($this);
-		$search
-				->like('freeword', ['before' => true, 'after' => true, 'field' => [$this->aliasField('content'),  'EngineerUser.name' , 'EnterpriseUser.name']])
-		;
-		return $search;
-	}
+        return $query;
+    }
+
+    /**
+     * enterprise_nameを取得
+     * @param Query $query
+     * @param type $options
+     * @return Query
+     */
+    public function findEnterpriseName(Query $query, $options) {
+        $query
+                ->join([
+                    'Enterprises' => [
+                        'table' => 'enterprises',
+                        'type' => 'left',
+                        'conditions' => 'Enterprises.id = Comments.enterprise_id'
+                    ],
+                    'EnterpriseUser' => [
+                        'table' => 'users',
+                        'type' => 'left',
+                        'conditions' => 'EnterpriseUser.id = Enterprises.user_id'
+                    ]
+                ])
+                ->select(['enterprise_name' => 'EnterpriseUser.name']);
+
+        return $query;
+    }
+
+    /**
+     * 検索コンポーネント用
+     * @return Manager
+     */
+    public function searchConfiguration() {
+        $search = new Manager($this);
+        $search
+                ->like('freeword', ['before' => true, 'after' => true, 'field' => [$this->aliasField('content'), 'EngineerUser.name', 'EnterpriseUser.name']])
+        ;
+        return $search;
+    }
 
 }

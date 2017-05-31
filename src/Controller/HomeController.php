@@ -79,8 +79,6 @@ class HomeController extends AppController {
 				->find('collection')
 				;
 
-		debug( $comments );
-
 		$this->set(compact('engineer', 'notices', 'comments'));
 		$this->render('engineer');
 		return;

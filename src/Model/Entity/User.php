@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Auth\DefaultPasswordHasher;
+use Cake\Network\Session;
 use App\Defines\Defines;
+use App\Utils\AppUtility;
 /**
  * User Entity.
  *
@@ -23,8 +26,7 @@ use App\Defines\Defines;
  * @property \App\Model\Entity\Enterprise[] $enterprises
  * @property \App\Model\Entity\Information[] $informations
  */
-class User extends Entity
-{
+class User extends Entity {
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -48,18 +50,15 @@ class User extends Entity
     protected $_hidden = [
         'password'
     ];
-	
-	
-    protected function _setPassword($password)
-    {
-		if( $password == '' ){
-			return $this->password;
-		}
+
+    protected function _setPassword($password) {
+        if ($password == '') {
+            return $this->password;
+        }
         return (new DefaultPasswordHasher)->hash($password);
     }
 
-    public function parentNode()
-    {
+    public function parentNode() {
         if (!$this->id) {
             return null;
         }
@@ -76,30 +75,45 @@ class User extends Entity
 
         return ['Groups' => ['id' => $group_id]];
     }
-		
-	protected function _getEnterprise($value){
-		if( isset( $value )){
-			return $value;
-		}
-		
-		$enterprise = TableRegistry::get('Enterprises')->find()
-				->where(['user_id'=>$this->id])
-				->first();
-		
-		$this->enterprise = $enterprise;
-		return $enterprise;
-	}
-	
-	protected function _getEngineer( $value ){
-		if( isset( $value )){
-			return $value;
-		}
-		
-		$engineer = TableRegistry::get('Engineers')->find()
-				->where(['user_id'=>$this->id])
-				->first();
-		
-		$this->engineer = $engineer;
-		return $engineer;
-	}
+
+    protected function _getEnterprise($value) {
+        if (isset($value)) {
+            return $value;
+        }
+
+        $enterprise = TableRegistry::get('Enterprises')->find()
+                ->where(['user_id' => $this->id])
+                ->first();
+
+        $this->enterprise = $enterprise;
+        return $enterprise;
+    }
+
+    protected function _getEngineer($value) {
+        if (isset($value)) {
+            return $value;
+        }
+
+        $engineer = TableRegistry::get('Engineers')->find()
+                ->where(['user_id' => $this->id])
+                ->first();
+
+        $this->engineer = $engineer;
+        return $engineer;
+    }
+    
+
+    
+    protected function _getEngineerName($value){
+        
+        $session = new Session();
+        
+        //フリーコースの企業相手には名前の代わりにハッシュを返す
+        if( $session->read('Auth.User.group_id') == Defines::GROUP_ENTERPRISE_FREE ){
+            return AppUtility::nameToHash($this->name);
+        }else{
+            return $this->name;
+        }
+    }
+
 }
