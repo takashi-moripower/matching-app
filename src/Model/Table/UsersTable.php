@@ -245,9 +245,9 @@ class UsersTable extends Table {
         $email
                 ->transport('default')
                 ->viewVars(['code' => $code])
-                ->from([Defines::SYSTEM_EMAIL => Defines::SYSTEM_NAME])
-                ->subject(Defines::SYSTEM_NAME . '登録手続き')
-                ->to($data['email'])
+                ->setFrom([Defines::SYSTEM_EMAIL => Defines::SYSTEM_NAME])
+                ->setSubject(Defines::SYSTEM_NAME . '登録手続き')
+                ->setTo($data['email'])
                 ->template('check')
                 ->send();
     }
