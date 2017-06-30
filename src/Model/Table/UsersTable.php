@@ -240,7 +240,8 @@ class UsersTable extends Table {
 
         $table_o->save($opt);
 
-        $email = new \Cake\Network\Email\Email();
+        $email = new \Cake\Mailer\Email('default');
+        
         $email
                 ->transport('default')
                 ->viewVars(['code' => $code])
