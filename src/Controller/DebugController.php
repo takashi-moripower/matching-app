@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use App\Defines\Defines;
-use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
+use Cake\Mailer\Email;
 
 /**
  * Users Controller
@@ -27,6 +27,7 @@ class DebugController extends AppController {
 
 		$this->redirect(['controller' => 'home', 'action' => 'index']);
 	}
+
 	public function dummyComments() {
 		$this->loadComponent('DummyData');
 		$this->DummyData->comments();
@@ -59,7 +60,7 @@ class DebugController extends AppController {
 		$table_u = TableRegistry::get('Users');
 
 		$engineers = $table_u->find()
-				->where(['group_id in' => [ Defines::GROUP_ENTERPRISE_FREE, Defines::GROUP_ENTERPRISE_PREMIUM]]);
+				->where(['group_id in' => [Defines::GROUP_ENTERPRISE_FREE, Defines::GROUP_ENTERPRISE_PREMIUM]]);
 
 		$i = 0;
 		foreach ($engineers as $engineer) {
@@ -86,7 +87,6 @@ class DebugController extends AppController {
 		$this->render('/Common/debug');
 	}
 
-
 	public function loginAs($user_id = NULL) {
 		$table_u = TableRegistry::get('Users');
 
@@ -105,6 +105,27 @@ class DebugController extends AppController {
 		$this->Auth->setUser($user);
 
 		$this->redirect(['controller' => 'home', 'action' => 'index']);
+	}
+
+	public function email() {
+
+		$body = "くいっくぶらうんふぉっくすじゃんぷすおーばーれいじいどっぐ";
+		$email = new Email();
+
+		$email->template('default')
+				->emailFormat('text')
+				->to('nin65535@gmail.com')
+				->from('takashi@moripower.jp')
+				->subject('EMAIL DEBUG')
+				->transport('SendGrid');
+
+		if ($email->send($body)) {
+			// 成功
+		} else {
+			// 失敗
+		}
+
+		$this->render('/Common/debug');
 	}
 
 }
