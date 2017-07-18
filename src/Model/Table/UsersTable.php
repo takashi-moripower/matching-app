@@ -241,14 +241,18 @@ class UsersTable extends Table {
         $table_o->save($opt);
 
         $email = new \Cake\Mailer\Email('default');
-        
+
         $email
                 ->transport('default')
                 ->viewVars(['code' => $code])
                 ->setFrom([Defines::SYSTEM_EMAIL => Defines::SYSTEM_NAME])
                 ->setSubject(Defines::SYSTEM_NAME . '登録手続き')
                 ->setTo($data['email'])
-                ->template('check')
+                ->template('check');
+
+        debug($email);
+
+        $email
                 ->send();
     }
 
