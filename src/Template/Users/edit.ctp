@@ -50,7 +50,7 @@ $label_name = ( Defines::isEnterprise($user->group_id)) ? '企業名' : '氏名'
                         if( $this->getLoginUser('group_id') == Defines::GROUP_ADMINISTRATOR && Defines::isEnterprise( $user->group_id ) ){
                             $forms['Group'] = $this->Form->select( 'group_id' , $groups); 
                         }else{
-                            echo $this->form->hidden('group_id');
+                            echo $this->Form->hidden('group_id');
                         }
                     ?>
                     <?php foreach ($forms as $label => $item):?>
@@ -81,4 +81,3 @@ $label_name = ( Defines::isEnterprise($user->group_id)) ? '企業名' : '氏名'
         </div>
     </div>	
 </div>
-
