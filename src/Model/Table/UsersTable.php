@@ -250,8 +250,6 @@ class UsersTable extends Table {
                 ->setTo($data['email'])
                 ->template('check');
 
-        debug($email);
-
         $email
                 ->send();
     }
